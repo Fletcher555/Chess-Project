@@ -1,17 +1,23 @@
-from dataForChessGame import gameScale as gs
-import math
+def movePiece(self, clickX, clickY):
+    clickPosition = (math.ceil((clickY - (self.gameScale / 2)) / self.gameScale * 8) + 1) \
+                    + (math.ceil(clickX / self.gameScale * 8)) \
+                    + ((math.ceil((clickY - (self.gameScale / 2)) / self.gameScale * 8) + 1) * 7)
 
-myX = [22, 81, 122, 194, 234, 278, 346, 381]
-# var = math.ceil(x / gs * 8)
-myY = [141, 168, 219, 267, 320, 377, 429, 485]
-# var = math.ceil((y - (gs / 2)) / gs * 8) + 2
+    print(self.pieceSelected)
 
+    for x in range(len(self.allPieces)):
+        for y in range(len(self.allPieces[x])):
+            if self.allPieces[x][y].position == clickPosition:
+                if self.pieceSelected is None:
+                    print("selected")
+                    self.pieceSelected = self.allPieces[x][y]
+                    print(self.pieceSelected)
 
-for y in myY:
-    var = math.ceil((y - (gs / 2)) / gs * 8) + 2
-    print(var)
-
-
-# pixelValues = [((((self.position - 1) % 8) + 1) * (self.gameScale / 8)) - (self.gameScale / 16),
-#                      ((int((self.position - 1) / 8)) * (self.gameScale / 8)) - (3 * self.gameScale / 16) + (
-#                               self.gameScale / 2)]
+            else:
+                print("moved")
+                (self.rooks, self.knights, self.bishops, self.queens, self.kings, self.pawns)[x].remove(
+                    (self.rooks, self.knights, self.bishops, self.queens, self.kings, self.pawns)[x][y])
+                self.pieceSelected.position = clickPosition
+                self.updateChessPieces()
+                self.pieceSelected = None
+                break

@@ -34,10 +34,9 @@ class initialize:
         print("pressed", repr(event.char))
 
     def callback(self, event):
-        print("clicked at", event.x, event.y)
         if event.y > gameScale / 4:
-            print("H")
             self.c.movePiece(clickX=event.x, clickY=event.y)
+            print("click")
 
 
 

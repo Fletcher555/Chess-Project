@@ -111,8 +111,7 @@ class chessGame:
             for x in range(len(self.allPieces)):
                 for y in range(len(self.allPieces[x])):
                     if self.allPieces[x][y].position == clickPosition:
-                        (self.rooks, self.knights, self.bishops, self.queens, self.kings, self.pawns)[x].remove(
-                            (self.rooks, self.knights, self.bishops, self.queens, self.kings, self.pawns)[x][y])
+                        del((self.rooks, self.knights, self.bishops, self.queens, self.kings, self.pawns)[x][y])
                         break
             self.pieceSelected.position = clickPosition
             self.updateChessPieces()
