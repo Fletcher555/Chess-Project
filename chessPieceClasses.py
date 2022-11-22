@@ -1,5 +1,6 @@
 from PIL import ImageTk, Image
 import dataForChessGame as data
+import abc
 
 
 class chessPiece:
@@ -11,8 +12,15 @@ class chessPiece:
         self.gameScale = gameScale
         self.img = None
 
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
     def getSprite(self):
-        pass
+        raise NotImplemented
+
+    @abc.abstractmethod
+    def isValidMove(self, newPosition):
+        raise NotImplemented
 
     def placePieces(self):
         self.getSprite()
@@ -37,6 +45,15 @@ class rook(chessPiece):
             self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\whiteRook.png')))
         elif self.color == 1:
             self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\blackRook.png')))
+
+    def isValidMove(self, newPosition):
+        print(f'Current position: {self.position % 8}, New Position: {newPosition % 8}')
+        if (newPosition % 8) == (self.position % 8):
+            print("a")
+            return True
+        else:
+            return False
+
 
 
 class knight(chessPiece):
