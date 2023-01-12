@@ -11,6 +11,7 @@ class chessPiece:
         self.root = root
         self.gameScale = gameScale
         self.img = None
+        self.possibleMoveMarkers = []
 
     __metaclass__ = abc.ABCMeta
 
@@ -19,8 +20,17 @@ class chessPiece:
         raise NotImplemented
 
     @abc.abstractmethod
-    def isValidMove(self, newPosition):
+    def validMoves(self, possibleMoveList, allPieces):
         raise NotImplemented
+
+    @abc.abstractmethod
+    def possibleMoves(self):
+        raise NotImplemented
+
+    def validMoveList(self, allPieces):
+        possibleMoveList = self.possibleMoves()
+        validMoveList = self.validMoves(possibleMoveList, allPieces)
+        return validMoveList
 
     def placePieces(self):
         self.getSprite()
@@ -33,64 +43,33 @@ class chessPiece:
                                self.gameScale / 2)]
         return pixelValues
 
+    def displayPossibleMoves(self, positionList, allPieces):
+        for x in allPieces:
+            if x.position in positionList:
+                marker = possibleMoveMarker(True, x.position, self.canvas, self.root, self.gameScale)
+                marker.placePieces()
+                self.possibleMoveMarkers.append(marker)
+                positionList.remove(x.position)
+        for x in positionList:
+            marker = possibleMoveMarker(False, x, self.canvas, self.root, self.gameScale)
+            marker.placePieces()
+            self.possibleMoveMarkers.append(marker)
+
     @staticmethod
-    def resizeImage(inputIMG):
-        newIMG = inputIMG.resize((int(round(data.gameScale / 8)), int(round(data.gameScale / 8))), Image.ANTIALIAS)
+    def resizeImage(inputIMG, factor=int(round(data.gameScale / 8))):
+        newIMG = inputIMG.resize((factor, factor), Image.ANTIALIAS)
         return newIMG
 
 
-class rook(chessPiece):
+class possibleMoveMarker(chessPiece):
     def getSprite(self):
-        if self.color == 0:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\whiteRook.png')))
-        elif self.color == 1:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\blackRook.png')))
-
-    def isValidMove(self, newPosition):
-        print(f'Current position: {self.position % 8}, New Position: {newPosition % 8}')
-        if (newPosition % 8) == (self.position % 8):
-            print("a")
-            return True
+        if self.color:
+            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\redDot.png'),
+                                                           factor=int(round(data.gameScale / 24))))
+        elif (((int(self.position / 8 - 0.01) + 1) % 2 == 1) and (self.position % 8) % 2 == 1) or (
+                ((int(self.position / 8 - 0.01) + 1) % 2 == 0) and (self.position % 8) % 2 == 0):
+            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\lightDot.png'),
+                                                           factor=int(round(data.gameScale / 24))))
         else:
-            return False
-
-
-
-class knight(chessPiece):
-    def getSprite(self):
-        if self.color == 0:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\whiteKnight.png')))
-        elif self.color == 1:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\blackKnight.png')))
-
-
-class bishop(chessPiece):
-    def getSprite(self):
-        if self.color == 0:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\whiteBishop.png')))
-        elif self.color == 1:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\blackBishop.png')))
-
-
-class queen(chessPiece):
-    def getSprite(self):
-        if self.color == 0:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\whiteQueen.png')))
-        elif self.color == 1:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\blackQueen.png')))
-
-
-class king(chessPiece):
-    def getSprite(self):
-        if self.color == 0:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\whiteKing.png')))
-        elif self.color == 1:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\blackKing.png')))
-
-
-class pawn(chessPiece):
-    def getSprite(self):
-        if self.color == 0:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\whitePawn.png')))
-        elif self.color == 1:
-            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\blackPawn.png')))
+            self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\darkDot.png'),
+                                                           factor=int(round(data.gameScale / 24))))

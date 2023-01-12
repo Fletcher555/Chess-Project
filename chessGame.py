@@ -1,6 +1,11 @@
 import string
-import chessPieceClasses
 import math
+from pawn import pawn
+from knight import knight
+from bishop import bishop
+from queen import queen
+from rook import rook
+from king import king
 
 
 class chessGame:
@@ -60,23 +65,23 @@ class chessGame:
                     color = 1
 
                 if self.FEN[x] in 'rR':
-                    self.allPieces.append(chessPieceClasses.rook(color, position, canvas=self.canvas, root=self.root,
-                                                                 gameScale=self.gameScale))
+                    self.allPieces.append(rook(color, position, canvas=self.canvas, root=self.root,
+                                               gameScale=self.gameScale))
                 if self.FEN[x] in 'nN':
-                    self.allPieces.append(chessPieceClasses.knight(color, position, canvas=self.canvas, root=self.root,
-                                                                   gameScale=self.gameScale))
+                    self.allPieces.append(knight(color, position, canvas=self.canvas, root=self.root,
+                                                 gameScale=self.gameScale))
                 if self.FEN[x] in 'bB':
-                    self.allPieces.append(chessPieceClasses.bishop(color, position, canvas=self.canvas, root=self.root,
-                                                                   gameScale=self.gameScale))
+                    self.allPieces.append(bishop(color, position, canvas=self.canvas, root=self.root,
+                                                 gameScale=self.gameScale))
                 if self.FEN[x] in 'qQ':
-                    self.allPieces.append(chessPieceClasses.queen(color, position, canvas=self.canvas, root=self.root,
-                                                                  gameScale=self.gameScale))
+                    self.allPieces.append(queen(color, position, canvas=self.canvas, root=self.root,
+                                                gameScale=self.gameScale))
                 if self.FEN[x] in 'kK':
-                    self.allPieces.append(chessPieceClasses.king(color, position, canvas=self.canvas, root=self.root,
-                                                                 gameScale=self.gameScale))
+                    self.allPieces.append(king(color, position, canvas=self.canvas, root=self.root,
+                                               gameScale=self.gameScale))
                 if self.FEN[x] in 'pP':
-                    self.allPieces.append(chessPieceClasses.pawn(color, position, canvas=self.canvas, root=self.root,
-                                                                 gameScale=self.gameScale))
+                    self.allPieces.append(pawn(color, position, canvas=self.canvas, root=self.root,
+                                               gameScale=self.gameScale))
             elif self.FEN[x] == '/':
                 pass
             else:
@@ -97,14 +102,23 @@ class chessGame:
             for x in self.allPieces:
                 if x.position == clickPosition:
                     self.pieceSelected = x
+                    y = self.pieceSelected.validMoveList(self.allPieces)
+                    self.pieceSelected.displayPossibleMoves(y, self.allPieces)
         else:
-            if self.pieceSelected.isValidMove(clickPosition):
+            if clickPosition in self.pieceSelected.validMoveList(self.allPieces):
                 for x in range(len(self.allPieces)):
                     if self.allPieces[x].position == clickPosition:
-                        del (self.allPieces[x])
+                        del self.allPieces[x]
+                        self.pieceSelected.position = clickPosition
+                        self.updateChessPieces()
+                        self.pieceSelected.possibleMoveMarkers = []
+                        self.pieceSelected = None
                         break
-                self.pieceSelected.position = clickPosition
-                self.updateChessPieces()
-                self.pieceSelected = None
+                else:
+                    self.pieceSelected.position = clickPosition
+                    self.updateChessPieces()
+                    self.pieceSelected.possibleMoveMarkers = []
+                    self.pieceSelected = None
             else:
+                self.pieceSelected.possibleMoveMarkers = []
                 self.pieceSelected = None

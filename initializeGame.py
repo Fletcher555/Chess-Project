@@ -9,9 +9,10 @@ class initialize:
     def __init__(self):
         self.root = tk.Tk()
         self.canvas = tk.Canvas(self.root, width=gameScale, height=int(gameScale + gameScale / 2), highlightthickness=0,
-                           background=data.brown)
-        self.c = chessGame(white=data.white, green=data.green, gameScale=data.gameScale, canvas=self.canvas, root=self.root,
-                      FEN=data.startFEN)
+                                background=data.brown)
+        self.c = chessGame(white=data.white, green=data.green, gameScale=data.gameScale, canvas=self.canvas,
+                           root=self.root,
+                           FEN=data.startFEN)
 
     def main(self):
         self.root.title("chessGame")
@@ -30,14 +31,13 @@ class initialize:
         self.root.mainloop()
         time.sleep(3)
 
-    def key(self, event):
-        print("pressed", repr(event.char))
+    @staticmethod
+    def key(event):
+        pass
 
     def callback(self, event):
         if event.y > gameScale / 4:
             self.c.movePiece(clickX=event.x, clickY=event.y)
-            print("click")
-
 
 
 i = initialize()
