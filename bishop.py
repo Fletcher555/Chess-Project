@@ -12,41 +12,14 @@ class bishop(chessPiece):
 
     def possibleMoves(self):
         possibleMoveList = []
-        # Checks to see if the bishop is on the right edge of the board.
-        # This whole if statement handles the pieces moving right.
-        if self.position % 8 != 0:
-            # This adds all the values to the top right direction.
-            x = 0
-            while self.position + (x + 1) - ((x + 1) * 8) > 1:
-                possibleMoveList.append(self.position + (x + 1) - ((x + 1) * 8))
-                if ((self.position + (x + 1) - ((x + 1) * 8)) % 8) == 0:
+        x, y = divmod(self.position - 1, 8)
+        for dx, dy in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
+            for i in range(1, 8):
+                new_x, new_y = x + i * dx, y + i * dy
+                if 0 <= new_x < 8 and 0 <= new_y < 8:
+                    possibleMoveList.append(new_x * 8 + new_y + 1)
+                else:
                     break
-                x += 1
-            # This adds all the values to the bottom right.
-            x = 0
-            while self.position + ((x + 1) * 8) + (1 + x) <= 64:
-                possibleMoveList.append(self.position + ((x + 1) * 8) + (1 + x))
-                if (self.position + ((x + 1) * 8) + (1 + x)) % 8 == 0:
-                    break
-                x += 1
-        # Checks to see if the bishop is on the left edge of the board.
-        # This whole if statement handles the pieces moving left.
-        if self.position % 8 != 1:
-            # This adds all the values to the bottom left direction.
-            x = 0
-            while (self.position - (x + 1) + ((x + 1) * 8)) < 64:
-                possibleMoveList.append(self.position - (x + 1) + ((x + 1) * 8))
-                if (self.position - (x + 1) + ((x + 1) * 8)) % 8 == 1:
-                    break
-                x += 1
-            # This adds all the values in the top left direction.
-            x = 0
-            while self.position - ((x + 1) * 8) - (1 + x) > 0:
-                possibleMoveList.append(self.position - ((x + 1) * 8) - (1 + x))
-                if (self.position - ((x + 1) * 8) - (1 + x)) % 8 == 1:
-                    break
-                x += 1
-
         return possibleMoveList
 
     def validMoves(self, possibleMoveList, allPieces):
