@@ -1,5 +1,6 @@
 from chessPieceClasses import chessPiece
 from PIL import ImageTk, Image
+import math
 
 
 class bishop(chessPiece):
@@ -49,4 +50,36 @@ class bishop(chessPiece):
         return possibleMoveList
 
     def validMoves(self, possibleMoveList, allPieces):
-        return possibleMoveList
+        validMoveList = possibleMoveList
+        # These two formulas calculate the row and column of the bishop
+        positionColumn = (self.position - 1) % 8 + 1
+        positionRow = math.ceil(self.position / 8)
+
+        for x in allPieces:
+            if x != self:
+                if x.position in validMoveList:
+                    # Calculates row and column of piece in sight
+                    xPositionColumn = (x.position - 1) % 8 + 1
+                    xPositionRow = math.ceil(x.position / 8)
+
+                    # If the piece is below.
+                    if xPositionRow > positionRow:
+                        # If piece is bottom right.
+                        if xPositionColumn > positionColumn:
+                            validMoveList = [y for y in validMoveList if ((y - 1) % 8 + 1) <= xPositionColumn or math.ceil(y / 8) <= xPositionRow]
+                        # If piece is bottom left.
+                        elif xPositionColumn < positionColumn:
+                            validMoveList = [y for y in validMoveList if ((y - 1) % 8 + 1) >= xPositionColumn or math.ceil(y / 8) <= xPositionRow]
+                    # If piece is above.
+                    if xPositionRow < positionRow:
+                        # If piece is top right.
+                        if xPositionColumn > positionColumn:
+                            validMoveList = [y for y in validMoveList if ((y - 1) % 8 + 1) <= xPositionColumn or math.ceil(y / 8) >= xPositionRow]
+                        # If piece is top left.
+                        elif xPositionColumn < positionColumn:
+                            validMoveList = [y for y in validMoveList if ((y - 1) % 8 + 1) >= xPositionColumn or math.ceil(y / 8) >= xPositionRow]
+            if x.position in validMoveList:
+                if x.color == self.color:
+                    validMoveList.remove(x.position)
+
+        return validMoveList

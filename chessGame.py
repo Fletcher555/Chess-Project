@@ -60,9 +60,9 @@ class chessGame:
             if self.FEN[x] in 'rnbqkpRNBQKP':
                 position += 1
                 if self.FEN[x].isupper():
-                    color = 0
+                    color = 0  # White
                 else:
-                    color = 1
+                    color = 1  # Black
 
                 if self.FEN[x] in 'rR':
                     self.allPieces.append(rook(color, position, canvas=self.canvas, root=self.root,
@@ -89,9 +89,27 @@ class chessGame:
 
         self.updateChessPieces()
 
-    def updateChessPieces(self):
+    def updateChessPieces(self, oldPos=None):
+
         for x in self.allPieces:
             x.placePieces()
+
+            # Removes all old en passant
+            if type(x).__name__ == "pawn":
+                x.isEnPassant = False
+
+        # If last move was a double forward it makes that pawn be able to be taken en passant
+        if type(self.pieceSelected).__name__ == "pawn":
+            if oldPos is not None:
+                if abs(self.pieceSelected.position - oldPos) == 16:
+                    if self.pieceSelected.color == 0:
+                        self.pieceSelected.isEnPassant = True
+                    elif self.pieceSelected.color == 1:
+                        self.pieceSelected.isEnPassant = True
+
+        if self.pieceSelected is not None:
+            self.pieceSelected.possibleMoveMarkers = []
+            self.pieceSelected = None
 
     def movePiece(self, clickX, clickY):
         clickPosition = (math.ceil((clickY - (self.gameScale / 2)) / self.gameScale * 8) + 1) \
@@ -102,23 +120,35 @@ class chessGame:
             for x in self.allPieces:
                 if x.position == clickPosition:
                     self.pieceSelected = x
-                    y = self.pieceSelected.validMoveList(self.allPieces)
-                    self.pieceSelected.displayPossibleMoves(y, self.allPieces)
+                    validMoveList = self.pieceSelected.validMoveList(self.allPieces)
+                    # If the list is empty, i.e. the piece has no possible moves it will be unselected
+                    if not validMoveList:
+                        self.pieceSelected = None
+                    else:
+                        self.pieceSelected.displayPossibleMoves(validMoveList, self.allPieces)
+
         else:
             if clickPosition in self.pieceSelected.validMoveList(self.allPieces):
                 for x in range(len(self.allPieces)):
                     if self.allPieces[x].position == clickPosition:
                         del self.allPieces[x]
+                        oldPos = self.pieceSelected.position
                         self.pieceSelected.position = clickPosition
-                        self.updateChessPieces()
-                        self.pieceSelected.possibleMoveMarkers = []
-                        self.pieceSelected = None
+                        self.updateChessPieces(oldPos)
                         break
                 else:
+                    oldPos = self.pieceSelected.position
                     self.pieceSelected.position = clickPosition
-                    self.updateChessPieces()
-                    self.pieceSelected.possibleMoveMarkers = []
-                    self.pieceSelected = None
+                    # The check below is for an en passant take, this is the only time a piece is deleted without the
+                    # capturing piece being in the same square.
+                    if type(self.pieceSelected).__name__ == "pawn":
+                        for x in range(len(self.allPieces)):
+                            if type(self.allPieces[x]).__name__ == "pawn" and abs(
+                                    self.allPieces[x].position - self.pieceSelected.position) == 8 and self.allPieces[x].isEnPassant:
+                                print(1)
+                                del self.allPieces[x]
+                                break
+                    self.updateChessPieces(oldPos)
+
             else:
-                self.pieceSelected.possibleMoveMarkers = []
-                self.pieceSelected = None
+                self.updateChessPieces()

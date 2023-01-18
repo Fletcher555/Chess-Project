@@ -1,3 +1,5 @@
+from abc import ABC
+
 from PIL import ImageTk, Image
 import dataForChessGame as data
 import abc
@@ -43,17 +45,21 @@ class chessPiece:
                                self.gameScale / 2)]
         return pixelValues
 
-    def displayPossibleMoves(self, positionList, allPieces):
+    def displayPossibleMoves(self, validMoveList, allPieces):
+        positionList = validMoveList
         for x in allPieces:
             if x.position in positionList:
                 marker = possibleMoveMarker(True, x.position, self.canvas, self.root, self.gameScale)
                 marker.placePieces()
                 self.possibleMoveMarkers.append(marker)
                 positionList.remove(x.position)
-        for x in positionList:
-            marker = possibleMoveMarker(False, x, self.canvas, self.root, self.gameScale)
-            marker.placePieces()
-            self.possibleMoveMarkers.append(marker)
+        if positionList:
+            for x in positionList:
+                marker = possibleMoveMarker(False, x, self.canvas, self.root, self.gameScale)
+                marker.placePieces()
+                self.possibleMoveMarkers.append(marker)
+        if not validMoveList:
+            print(1)
 
     @staticmethod
     def resizeImage(inputIMG, factor=int(round(data.gameScale / 8))):
@@ -61,7 +67,7 @@ class chessPiece:
         return newIMG
 
 
-class possibleMoveMarker(chessPiece):
+class possibleMoveMarker(chessPiece, ABC):
     def getSprite(self):
         if self.color:
             self.img = ImageTk.PhotoImage(self.resizeImage(Image.open(r'chessSprites\redDot.png'),
