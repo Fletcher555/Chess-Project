@@ -5,7 +5,7 @@ import dataForChessGame as data
 from dataForChessGame import gameScale
 
 
-class initialize:
+class initialize(object):
     def __init__(self):
         self.root = tk.Tk()
         self.canvas = tk.Canvas(self.root, width=gameScale, height=int(gameScale + gameScale / 2), highlightthickness=0,
@@ -13,6 +13,8 @@ class initialize:
         self.c = chessGame(white=data.white, green=data.green, gameScale=data.gameScale, canvas=self.canvas,
                            root=self.root,
                            FEN=data.startFEN)
+
+
 
     def main(self):
         self.root.title("chessGame")
@@ -22,8 +24,7 @@ class initialize:
         self.c.drawBoard()
         self.c.processStartFENString()
 
-        self.canvas.bind("<Key>", self.key)
-        self.canvas.bind("<Button-1>", self.callback)
+
 
         # Can set preset positions here using a var with FEN
 
@@ -31,13 +32,7 @@ class initialize:
         self.root.mainloop()
         time.sleep(3)
 
-    @staticmethod
-    def key(event):
-        pass
 
-    def callback(self, event):
-        if event.y > gameScale / 4:
-            self.c.movePiece(clickX=event.x, clickY=event.y)
 
 
 i = initialize()

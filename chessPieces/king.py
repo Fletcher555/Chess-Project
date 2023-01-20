@@ -16,10 +16,8 @@ class king(chessPiece):
         x, y = divmod(self.position - 1, 8)
         for dx, dy in [(1, 1), (1, -1), (-1, 1), (-1, -1), (1, 0), (-1, 0), (0, 1), (0, -1)]:
             new_x, new_y = x + dx, y + dy
-            print(new_x * 8 + new_y + 1)
             if 0 <= new_x < 8 and 0 <= new_y < 8:
                 possibleMoveList.append(new_x * 8 + new_y + 1)
-                print(new_x * 8 + new_y + 1)
 
         return possibleMoveList
 

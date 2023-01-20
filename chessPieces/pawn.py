@@ -36,11 +36,13 @@ class pawn(chessPiece):
             # White
             if self.color == 0:
                 # If there is a piece in front of the pawn.
-                if self.position - x.position == 8:
-                    validMoveList.remove(x.position)
+                if self.position - x.position == 8 or self.position - x.position == 16:
+                    if x.position in validMoveList:
+                        validMoveList.remove(x.position)
                     # If there is a piece in front of the pawn also remove the double jump if it is there.
                     if self.position - 16 in validMoveList:
                         validMoveList.remove(self.position - 16)
+
                 # If the potential piece is the opposite color.
                 if self.color != x.color:
                     # If the potential piece is to the left add that as a possible move.
@@ -63,8 +65,9 @@ class pawn(chessPiece):
             # Black
             if self.color == 1:
                 # If there is a piece in front of the pawn.
-                if x.position - self.position == 8:
-                    validMoveList.remove(x.position)
+                if x.position - self.position == 8 or x.position - self.position == 16:
+                    if x.position in validMoveList:
+                        validMoveList.remove(x.position)
                     # If there is a piece in front of the pawn also remove the double jump if it is there.
                     if self.position + 16 in validMoveList:
                         validMoveList.remove(self.position + 16)

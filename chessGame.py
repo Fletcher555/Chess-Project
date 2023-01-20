@@ -1,11 +1,11 @@
 import string
 import math
-from pawn import pawn
-from knight import knight
-from bishop import bishop
-from queen import queen
-from rook import rook
-from king import king
+from chessPieces.pawn import pawn
+from chessPieces.knight import knight
+from chessPieces.bishop import bishop
+from chessPieces.queen import queen
+from chessPieces.rook import rook
+from chessPieces.king import king
 
 
 class chessGame:
@@ -19,6 +19,20 @@ class chessGame:
 
         self.pieceSelected = None
         self.allPieces = []
+
+        self.canvas.bind("<Button-1>", self.callback)
+        self.canvas.bind('<Button1-Motion>', self.move)
+        self.canvas.bind('<ButtonRelease-1>', self.release)
+
+    def move(self, event):
+        pass
+
+    def release(self, event):
+        pass
+
+    def callback(self, event):
+        if event.y > self.gameScale / 4:
+            self.movePiece(clickX=event.x, clickY=event.y)
 
     def drawBoard(self):
         rank = 8
@@ -82,9 +96,7 @@ class chessGame:
                 if self.FEN[x] in 'pP':
                     self.allPieces.append(pawn(color, position, canvas=self.canvas, root=self.root,
                                                gameScale=self.gameScale))
-            elif self.FEN[x] == '/':
-                pass
-            else:
+            elif self.FEN[x] != '/':
                 position += int(self.FEN[x])
 
         self.updateChessPieces()
@@ -143,11 +155,11 @@ class chessGame:
                     # capturing piece being in the same square.
                     if type(self.pieceSelected).__name__ == "pawn":
                         for x in range(len(self.allPieces)):
-                            if type(self.allPieces[x]).__name__ == "pawn" and abs(
-                                    self.allPieces[x].position - self.pieceSelected.position) == 8 and self.allPieces[x].isEnPassant:
-                                print(1)
-                                del self.allPieces[x]
-                                break
+                            if type(self.allPieces[x]).__name__ == "pawn" and self.allPieces[x].isEnPassant:
+                                if self.pieceSelected.color == 0 and self.allPieces[x].position - self.pieceSelected.position == 8:
+                                    print(1)
+                                    del self.allPieces[x]
+                                    break
                     self.updateChessPieces(oldPos)
 
             else:
