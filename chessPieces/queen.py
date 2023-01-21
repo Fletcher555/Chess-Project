@@ -1,4 +1,4 @@
-from chessPieceClasses import chessPiece
+from chessPiece import chessPiece
 from PIL import ImageTk, Image
 import math
 
@@ -31,11 +31,11 @@ class queen(chessPiece):
         positionColumn = (self.position - 1) % 8 + 1
         positionRow = math.ceil(self.position / 8)
 
-        for x in allPieces:
+        for piece in allPieces:
             # Calculates row and column of piece in sight
-            xPositionColumn = (x.position - 1) % 8 + 1
-            xPositionRow = math.ceil(x.position / 8)
-            if x != self:
+            xPositionColumn = (piece.position - 1) % 8 + 1
+            xPositionRow = math.ceil(piece.position / 8)
+            if piece != self:
                 # Checks all rook moves for comments see rook class.
                 if positionRow == xPositionRow:
                     if positionColumn > xPositionColumn:
@@ -53,7 +53,7 @@ class queen(chessPiece):
                                          ((y - 1) % 8 + 1) != xPositionColumn or math.ceil(y / 8) <= xPositionRow]
 
                 # Checks all bishop moves for comments see bishop class.
-                if x.position in validMoveList:
+                if piece.position in validMoveList:
                     if xPositionRow > positionRow:
                         if xPositionColumn > positionColumn:
                             validMoveList = [y for y in validMoveList if
@@ -68,8 +68,8 @@ class queen(chessPiece):
                         elif xPositionColumn < positionColumn:
                             validMoveList = [y for y in validMoveList if
                                              ((y - 1) % 8 + 1) >= xPositionColumn or math.ceil(y / 8) >= xPositionRow]
-            if x.position in validMoveList:
-                if x.color == self.color:
-                    validMoveList.remove(x.position)
+            if piece.position in validMoveList:
+                if piece.color == self.color:
+                    validMoveList.remove(piece.position)
 
         return validMoveList

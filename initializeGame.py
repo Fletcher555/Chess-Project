@@ -1,6 +1,5 @@
 import tkinter as tk
 from chessGame import chessGame
-import time
 import dataForChessGame as data
 from dataForChessGame import gameScale
 
@@ -10,11 +9,11 @@ class initialize(object):
         self.root = tk.Tk()
         self.canvas = tk.Canvas(self.root, width=gameScale, height=int(gameScale + gameScale / 2), highlightthickness=0,
                                 background=data.brown)
+
+        # Changing the startFEN changes the starting position
         self.c = chessGame(white=data.white, green=data.green, gameScale=data.gameScale, canvas=self.canvas,
                            root=self.root,
                            FEN=data.startFEN)
-
-
 
     def main(self):
         self.root.title("chessGame")
@@ -24,17 +23,9 @@ class initialize(object):
         self.c.drawBoard()
         self.c.processStartFENString()
 
-
-
-        # Can set preset positions here using a var with FEN
-
         self.canvas.pack()
         self.root.mainloop()
-        time.sleep(3)
-
-
 
 
 i = initialize()
-
 i.main()

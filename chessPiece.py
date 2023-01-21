@@ -47,15 +47,15 @@ class chessPiece:
 
     def displayPossibleMoves(self, validMoveList, allPieces):
         positionList = validMoveList
-        for x in allPieces:
-            if x.position in positionList:
-                marker = possibleMoveMarker(True, x.position, self.canvas, self.root, self.gameScale)
+        for piece in allPieces:
+            if piece.position in positionList:
+                marker = possibleMoveMarker(True, piece.position, self.canvas, self.root, self.gameScale)
                 marker.placePieces()
                 self.possibleMoveMarkers.append(marker)
-                positionList.remove(x.position)
+                positionList.remove(piece.position)
         if positionList:
-            for x in positionList:
-                marker = possibleMoveMarker(False, x, self.canvas, self.root, self.gameScale)
+            for piece in positionList:
+                marker = possibleMoveMarker(False, piece, self.canvas, self.root, self.gameScale)
                 marker.placePieces()
                 self.possibleMoveMarkers.append(marker)
         if not validMoveList:

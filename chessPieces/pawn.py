@@ -1,4 +1,4 @@
-from chessPieceClasses import chessPiece
+from chessPiece import chessPiece
 from PIL import ImageTk, Image
 
 
@@ -32,62 +32,62 @@ class pawn(chessPiece):
 
     def validMoves(self, possibleMoveList, allPieces):
         validMoveList = possibleMoveList
-        for x in allPieces:
+        for piece in allPieces:
             # White
             if self.color == 0:
                 # If there is a piece in front of the pawn.
-                if self.position - x.position == 8 or self.position - x.position == 16:
-                    if x.position in validMoveList:
-                        validMoveList.remove(x.position)
+                if self.position - piece.position == 8 or self.position - piece.position == 16:
+                    if piece.position in validMoveList:
+                        validMoveList.remove(piece.position)
                     # If there is a piece in front of the pawn also remove the double jump if it is there.
                     if self.position - 16 in validMoveList:
                         validMoveList.remove(self.position - 16)
 
                 # If the potential piece is the opposite color.
-                if self.color != x.color:
+                if self.color != piece.color:
                     # If the potential piece is to the left add that as a possible move.
-                    if self.position - 9 == x.position and self.position % 8 != 1:
+                    if self.position - 9 == piece.position and self.position % 8 != 1:
                         validMoveList.append(self.position - 9)
                     # If the potential piece is to the right add that as a possible move.
-                    elif self.position - 7 == x.position and self.position % 8 != 0:
+                    elif self.position - 7 == piece.position and self.position % 8 != 0:
                         validMoveList.append(self.position - 7)
 
                     # This allows for en passant captures based on the variable stored by the pawn object.
-                    elif self.position - 1 == x.position and self.position % 8 != 0:
-                        if type(x).__name__ == "pawn":
-                            if x.isEnPassant:
+                    elif self.position - 1 == piece.position and self.position % 8 != 0:
+                        if type(piece).__name__ == "pawn":
+                            if piece.isEnPassant:
                                 validMoveList.append(self.position - 9)
-                    elif self.position + 1 == x.position and self.position % 8 != 1:
-                        if type(x).__name__ == "pawn":
-                            if x.isEnPassant:
+                    elif self.position + 1 == piece.position and self.position % 8 != 1:
+                        if type(piece).__name__ == "pawn":
+                            if piece.isEnPassant:
                                 validMoveList.append(self.position - 7)
 
             # Black
             if self.color == 1:
                 # If there is a piece in front of the pawn.
-                if x.position - self.position == 8 or x.position - self.position == 16:
-                    if x.position in validMoveList:
-                        validMoveList.remove(x.position)
+                if piece.position - self.position == 8 or piece.position - self.position == 16:
+                    if piece.position in validMoveList:
+                        validMoveList.remove(piece.position)
                     # If there is a piece in front of the pawn also remove the double jump if it is there.
                     if self.position + 16 in validMoveList:
                         validMoveList.remove(self.position + 16)
                 # If the potential piece is the opposite color.
-                if self.color != x.color:
+                if self.color != piece.color:
                     # If the potential piece is to the right add that as a possible move.
-                    if self.position + 9 == x.position and self.position % 8 != 0:
+                    if self.position + 9 == piece.position and self.position % 8 != 0:
                         validMoveList.append(self.position + 9)
                         # If the potential piece is to the left add that as a possible move.
-                    elif self.position + 7 == x.position and self.position % 8 != 1:
+                    elif self.position + 7 == piece.position and self.position % 8 != 1:
                         validMoveList.append(self.position + 7)
 
                     # This allows for en passant captures based on the variable stored by the pawn object.
-                    elif self.position + 1 == x.position and self.position % 8 != 0:
-                        if type(x).__name__ == "pawn":
-                            if x.isEnPassant:
+                    elif self.position + 1 == piece.position and self.position % 8 != 0:
+                        if type(piece).__name__ == "pawn":
+                            if piece.isEnPassant:
                                 validMoveList.append(self.position + 9)
-                    elif self.position - 1 == x.position and self.position % 8 != 1:
-                        if type(x).__name__ == "pawn":
-                            if x.isEnPassant:
+                    elif self.position - 1 == piece.position and self.position % 8 != 1:
+                        if type(piece).__name__ == "pawn":
+                            if piece.isEnPassant:
                                 validMoveList.append(self.position + 7)
 
         return validMoveList

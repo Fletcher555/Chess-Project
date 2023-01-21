@@ -10,6 +10,11 @@ from chessPieces.king import king
 
 class chessGame:
     def __init__(self, white, green, gameScale, canvas, root, FEN):
+
+        canvas.bind("<Button-1>", self.callback)
+        canvas.bind('<Button1-Motion>', self.move)
+        canvas.bind('<ButtonRelease-1>', self.release)
+
         self.white = white
         self.green = green
         self.gameScale = gameScale
@@ -19,10 +24,6 @@ class chessGame:
 
         self.pieceSelected = None
         self.allPieces = []
-
-        self.canvas.bind("<Button-1>", self.callback)
-        self.canvas.bind('<Button1-Motion>', self.move)
-        self.canvas.bind('<ButtonRelease-1>', self.release)
 
     def move(self, event):
         pass
@@ -35,80 +36,78 @@ class chessGame:
             self.movePiece(clickX=event.x, clickY=event.y)
 
     def drawBoard(self):
-        rank = 8
-        file = 8
-        for i in range(rank):
-            for j in range(file):
-                if (i % 2 == 0 and j % 2 == 0) or (i % 2 == 1 and j % 2 == 1):
+        for rank in range(8):
+            for file in range(8):
+                if (rank % 2 == 0 and file % 2 == 0) or (rank % 2 == 1 and file % 2 == 1):
                     color = self.green
                 else:
                     color = self.white
-                x1 = (7 - i) * (self.gameScale / 8)
-                y1 = j * (self.gameScale / 8) + (self.gameScale / 4)
-                x2 = ((7 - i + 1) * (self.gameScale / 8))
-                y2 = ((j + 1) * (self.gameScale / 8)) + (self.gameScale / 4)
+                x1 = (7 - rank) * (self.gameScale / 8)
+                y1 = file * (self.gameScale / 8) + (self.gameScale / 4)
+                x2 = ((7 - rank + 1) * (self.gameScale / 8))
+                y2 = ((file + 1) * (self.gameScale / 8)) + (self.gameScale / 4)
 
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=color, tags="rect", outline='')
 
-        for i in range(rank):
-            if i % 2 == 1:
+        for rank in range(8):
+            if rank % 2 == 1:
                 color = self.green
             else:
                 color = self.white
             x = self.gameScale / 64
-            y = (((self.gameScale / 8) * (7 - i + 1)) - (self.gameScale / 10)) + (self.gameScale / 4)
-            self.canvas.create_text(x, y, fill=color, text=str(i + 1), font='Helvetica 10 bold')
+            y = (((self.gameScale / 8) * (7 - rank + 1)) - (self.gameScale / 10)) + (self.gameScale / 4)
+            self.canvas.create_text(x, y, fill=color, text=str(rank + 1), font='Helvetica 10 bold')
 
-        for j in range(file):
-            if j % 2 == 1:
+        for file in range(8):
+            if file % 2 == 1:
                 color = self.green
             else:
                 color = self.white
-            x = ((self.gameScale / 8) * (j + 1)) - (self.gameScale / 48)
+            x = ((self.gameScale / 8) * (file + 1)) - (self.gameScale / 48)
             y = (self.gameScale - self.gameScale / 48) + (self.gameScale / 4)
-            self.canvas.create_text(x, y, fill=color, text=string.ascii_lowercase[j], font='Helvetica 10 bold')
+            self.canvas.create_text(x, y, fill=color, text=string.ascii_lowercase[file], font='Helvetica 10 bold')
 
     def processStartFENString(self):
         position = 0
-        for x in range(len(self.FEN)):
-            if self.FEN[x] in 'rnbqkpRNBQKP':
+        for letter in self.FEN:
+            if letter in 'rnbqkpRNBQKP':
                 position += 1
-                if self.FEN[x].isupper():
+                if letter.isupper():
                     color = 0  # White
                 else:
                     color = 1  # Black
 
-                if self.FEN[x] in 'rR':
+                if letter in 'rR':
                     self.allPieces.append(rook(color, position, canvas=self.canvas, root=self.root,
                                                gameScale=self.gameScale))
-                if self.FEN[x] in 'nN':
+                if letter in 'nN':
                     self.allPieces.append(knight(color, position, canvas=self.canvas, root=self.root,
                                                  gameScale=self.gameScale))
-                if self.FEN[x] in 'bB':
+                if letter in 'bB':
                     self.allPieces.append(bishop(color, position, canvas=self.canvas, root=self.root,
                                                  gameScale=self.gameScale))
-                if self.FEN[x] in 'qQ':
+                if letter in 'qQ':
                     self.allPieces.append(queen(color, position, canvas=self.canvas, root=self.root,
                                                 gameScale=self.gameScale))
-                if self.FEN[x] in 'kK':
+                if letter in 'kK':
                     self.allPieces.append(king(color, position, canvas=self.canvas, root=self.root,
                                                gameScale=self.gameScale))
-                if self.FEN[x] in 'pP':
+                if letter in 'pP':
                     self.allPieces.append(pawn(color, position, canvas=self.canvas, root=self.root,
                                                gameScale=self.gameScale))
-            elif self.FEN[x] != '/':
-                position += int(self.FEN[x])
+            elif letter != '/':
+                position += int(letter)
 
         self.updateChessPieces()
 
     def updateChessPieces(self, oldPos=None):
 
-        for x in self.allPieces:
-            x.placePieces()
+        for piece in self.allPieces:
+            piece.placePieces()
 
             # Removes all old en passant
-            if type(x).__name__ == "pawn":
-                x.isEnPassant = False
+            if type(piece).__name__ == "pawn":
+                piece.isEnPassant = False
 
         # If last move was a double forward it makes that pawn be able to be taken en passant
         if type(self.pieceSelected).__name__ == "pawn":
@@ -129,9 +128,9 @@ class chessGame:
                         + ((math.ceil((clickY - (self.gameScale / 2)) / self.gameScale * 8) + 1) * 7)
 
         if self.pieceSelected is None:
-            for x in self.allPieces:
-                if x.position == clickPosition:
-                    self.pieceSelected = x
+            for piece in self.allPieces:
+                if piece.position == clickPosition:
+                    self.pieceSelected = piece
                     validMoveList = self.pieceSelected.validMoveList(self.allPieces)
                     # If the list is empty, i.e. the piece has no possible moves it will be unselected
                     if not validMoveList:
@@ -141,9 +140,9 @@ class chessGame:
 
         else:
             if clickPosition in self.pieceSelected.validMoveList(self.allPieces):
-                for x in range(len(self.allPieces)):
-                    if self.allPieces[x].position == clickPosition:
-                        del self.allPieces[x]
+                for i, piece in enumerate(self.allPieces):
+                    if piece.position == clickPosition:
+                        del self.allPieces[i]
                         oldPos = self.pieceSelected.position
                         self.pieceSelected.position = clickPosition
                         self.updateChessPieces(oldPos)
@@ -154,11 +153,10 @@ class chessGame:
                     # The check below is for an en passant take, this is the only time a piece is deleted without the
                     # capturing piece being in the same square.
                     if type(self.pieceSelected).__name__ == "pawn":
-                        for x in range(len(self.allPieces)):
-                            if type(self.allPieces[x]).__name__ == "pawn" and self.allPieces[x].isEnPassant:
-                                if self.pieceSelected.color == 0 and self.allPieces[x].position - self.pieceSelected.position == 8:
-                                    print(1)
-                                    del self.allPieces[x]
+                        for i, piece in enumerate(self.allPieces):
+                            if type(piece).__name__ == "pawn" and piece.isEnPassant:
+                                if self.pieceSelected.color == 0 and piece.position - self.pieceSelected.position == 8:
+                                    del self.allPieces[i]
                                     break
                     self.updateChessPieces(oldPos)
 

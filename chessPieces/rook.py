@@ -1,5 +1,5 @@
 import math
-from chessPieceClasses import chessPiece
+from chessPiece import chessPiece
 from PIL import ImageTk, Image
 
 
@@ -27,23 +27,23 @@ class rook(chessPiece):
         # Calculates row and column of self
         positionColumn = (self.position - 1) % 8 + 1
         positionRow = math.ceil(self.position / 8)
-        for x in allPieces:
+        for piece in allPieces:
             # Calculates row and column of piece in sight
-            xPositionColumn = (x.position - 1) % 8 + 1
-            xPositionRow = math.ceil(x.position / 8)
-            if x != self:
+            xPositionColumn = (piece.position - 1) % 8 + 1
+            xPositionRow = math.ceil(piece.position / 8)
+            if piece != self:
                 if positionRow == xPositionRow:
                     if positionColumn > xPositionColumn:
-                        validMoveList = [y for y in validMoveList if math.ceil(y / 8) != xPositionRow or ((y - 1) % 8 + 1) >= xPositionColumn]
+                        validMoveList = [validMove for validMove in validMoveList if math.ceil(validMove / 8) != xPositionRow or ((validMove - 1) % 8 + 1) >= xPositionColumn]
                     elif positionColumn < xPositionColumn:
-                        validMoveList = [y for y in validMoveList if math.ceil(y / 8) != xPositionRow or ((y - 1) % 8 + 1) <= xPositionColumn]
+                        validMoveList = [validMove for validMove in validMoveList if math.ceil(validMove / 8) != xPositionRow or ((validMove - 1) % 8 + 1) <= xPositionColumn]
 
                 elif positionColumn == xPositionColumn:
                     if positionRow > xPositionRow:
-                        validMoveList = [y for y in validMoveList if((y - 1) % 8 + 1) != xPositionColumn or math.ceil(y / 8) >= xPositionRow]
+                        validMoveList = [validMove for validMove in validMoveList if((validMove - 1) % 8 + 1) != xPositionColumn or math.ceil(validMove / 8) >= xPositionRow]
                     elif positionRow < xPositionRow:
-                        validMoveList = [y for y in validMoveList if((y - 1) % 8 + 1) != xPositionColumn or math.ceil(y / 8) <= xPositionRow]
-            if x.position in validMoveList:
-                if x.color == self.color:
-                    validMoveList.remove(x.position)
+                        validMoveList = [validMove for validMove in validMoveList if((validMove - 1) % 8 + 1) != xPositionColumn or math.ceil(validMove / 8) <= xPositionRow]
+            if piece.position in validMoveList:
+                if piece.color == self.color:
+                    validMoveList.remove(piece.position)
         return validMoveList

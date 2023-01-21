@@ -1,4 +1,4 @@
-from chessPieceClasses import chessPiece
+from chessPiece import chessPiece
 from PIL import ImageTk, Image
 
 
@@ -22,9 +22,9 @@ class knight(chessPiece):
 
     def validMoves(self, possibleMoveList, allPieces):
         validMoveList = possibleMoveList
-        for x in allPieces:
-            if x.color == self.color:
-                if x.position in validMoveList:
-                    validMoveList.remove(x.position)
+        for piece in allPieces:
+            if piece.color == self.color:
+                if piece.position in validMoveList:
+                    validMoveList.remove(piece.position)
         return validMoveList
 
